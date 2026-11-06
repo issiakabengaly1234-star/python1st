@@ -1,0 +1,14 @@
+<ul class="timeline">
+  {% for e in events %}
+    <li>
+      <span class="when">{{ e.date|date:"d/m/Y" }}</span>
+      <span class="kind kind-{{ e.kind }}">{{ e.kind_label }}</span>
+      <span>
+        {% if e.animal %}<a href="{% url 'animal_detail' e.animal.pk %}">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}
+        {% if e.detail %}<div class="detail">{{ e.detail }}</div>{% endif %}
+      </span>
+    </li>
+  {% empty %}
+    <li><span class="muted">Aucun événement enregistré pour le moment.</span></li>
+  {% endfor %}
+</ul>

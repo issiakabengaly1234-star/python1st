@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Créer un compte{% endblock %}
+{% block content %}
+<h1>Créer un compte éleveur</h1>
+<p class="muted">Vous pourrez ensuite enregistrer vos fermes et vos animaux.</p>
+<form method="post" class="card" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}{% include "core/_field.html" %}{% endfor %}
+  <div class="form-actions"><button class="btn" type="submit">Créer mon compte</button></div>
+</form>
+<p>Déjà inscrit ? <a href="{% url 'login' %}">Se connecter</a></p>
+{% endblock %}

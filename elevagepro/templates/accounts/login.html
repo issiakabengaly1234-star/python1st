@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block content %}
+<h1>ÉlevagePro</h1>
+<p class="muted">Connectez-vous pour suivre votre cheptel.</p>
+<form method="post" class="card" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}{% include "core/_field.html" %}{% endfor %}
+  <input type="hidden" name="next" value="{{ next }}">
+  <div class="form-actions"><button class="btn" type="submit">Se connecter</button></div>
+</form>
+<p>Pas encore de compte ? <a href="{% url 'register' %}">Créer un compte éleveur</a></p>
+{% endblock %}

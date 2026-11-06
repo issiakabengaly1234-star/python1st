@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load core_extras %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Tableau de bord</h1>
+    <p class="muted">{% if selected %}{{ selected }}{% else %}Toutes les fermes{% endif %} · année {{ year }}</p>
+  </div>
+  {% include "dashboard/_scope.html" %}
+</header>
+
+{% if not fermes %}
+  <div class="card">
+    <h2 class="section">Commencez par créer une ferme</h2>
+    <p>Une ferme regroupe vos animaux et vos dépenses.</p>
+    <a class="btn" href="{% url 'ferme_create' %}">Nouvelle ferme</a>
+  </div>
+{% else %}
+
+<div class="stats">
+  <div class="stat"><div class="value">{{ effectif_total }}</div><div class="label">animaux présents</div></div>
+  <div class="stat"><div class="value">{{ naissances }}</div><div class="label">naissances en {{ year }}</div></div>
+  <div class="stat"><div class="value">{{ pertes }}</div><div class="label">pertes et mortalités en {{ year }}</div></div>
+  <div class="stat"><div class="value">{{ total_ventes|money }}</div><div class="label">{{ nb_ventes }} vente{{ nb_ventes|pluralize }} en {{ year }}</div></div>
+  <div class="stat"><div class="value">{{ total_sorties|money }}</div><div class="label">dépenses et achats en {{ year }}</div></div>
+  <div class="stat {% if solde < 0 %}neg{% else %}pos{% endif %}"><div class="value">{{ solde|money }}</div><div class="label">solde en {{ year }}</div></div>
+</div>
+
+<div class="cols">
+  <section class="card">
+    <h2 class="section">Effectifs par espèce</h2>
+    {% for e in effectifs %}
+      <div class="species-row">
+        <div class="species-name">{{ e.espece__nom }}</div>
+        <div>
+          <div class="bar" role="img" aria-label="{{ e.total }} {{ e.espece__nom }}"><span style="width: {{ e.pct }}%"></span></div>
+          <div class="bar-meta">{{ e.males }} mâle{{ e.males|pluralize }} · {{ e.femelles }} femelle{{ e.femelles|pluralize }}</div>
+        </div>
+        <div class="species-count">{{ e.total }}</div>
+      </div>
+    {% empty %}
+      <p class="muted">Aucun animal présent. <a href="{% url 'animal_create' %}">Enregistrer un animal</a></p>
+    {% endfor %}
+  </section>
+
+  <section class="card">
+    <h2 class="section">Rappels de vaccination</h2>
+    <ul class="list-plain">
+      {% for r in rappels %}
+        <li>
+          <a href="{% url 'animal_detail' r.animal.pk %}">{{ r.animal }}</a> : {{ r.produit }}<br>
+          <span class="{% if r.en_retard %}late{% else %}soon{% endif %}">{% if r.en_retard %}En retard depuis le{% else %}À faire avant le{% endif %} {{ r.prochaine_date }}</span>
+        </li>
+      {% empty %}
+        <li class="muted">Aucun rappel dans les 30 prochains jours.</li>
+      {% endfor %}
+    </ul>
+    {% if traitements %}
+      <h2 class="section" style="margin-top:1.5rem">Traitements en cours</h2>
+      <ul class="list-plain">
+        {% for t in traitements %}
+          <li><a href="{% url 'animal_detail' t.animal.pk %}">{{ t.animal }}</a> : {{ t.produit }}<br><span class="muted">jusqu'au {{ t.date_fin }}</span></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </section>
+</div>
+
+<section>
+  <div class="page-head" style="margin-bottom:.75rem">
+    <h2 class="section" style="margin:0">Derniers événements</h2>
+    <a class="btn btn-ghost btn-sm" href="{% url 'historique' %}{% if selected %}?ferme={{ selected.pk }}{% endif %}">Voir tout l'historique</a>
+  </div>
+  {% include "dashboard/_timeline.html" with events=recents %}
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% if fermes.count > 1 or selected %}
+<form method="get" class="scope-form">
+  {% if kind %}<input type="hidden" name="type" value="{{ kind }}">{% endif %}
+  <label for="ferme" class="muted">Ferme</label>
+  <select name="ferme" id="ferme" onchange="this.form.submit()">
+    <option value="">Toutes</option>
+    {% for f in fermes %}<option value="{{ f.pk }}"{% if selected and selected.pk == f.pk %} selected{% endif %}>{{ f.nom }}</option>{% endfor %}
+  </select>
+  <noscript><button class="btn btn-ghost btn-sm" type="submit">Filtrer</button></noscript>
+</form>
+{% endif %}

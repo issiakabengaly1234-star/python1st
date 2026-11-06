@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Supprimer{% endblock %}
+{% block content %}
+<header class="page-head"><h1>Supprimer cet élément ?</h1></header>
+<form method="post" class="card form-card">
+  {% csrf_token %}
+  <p>Vous allez supprimer « <strong>{{ object }}</strong> ». Cette action est définitive.</p>
+  <div class="form-actions">
+    <button class="btn btn-danger" type="submit">Supprimer</button>
+    <a class="btn btn-ghost" href="{% url urls.list %}">Annuler</a>
+  </div>
+</form>
+{% endblock %}

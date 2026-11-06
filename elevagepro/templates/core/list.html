@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load core_extras %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>{{ title }}</h1>
+    <p class="muted">{{ page_obj.paginator.count }} enregistrement{{ page_obj.paginator.count|pluralize }}</p>
+  </div>
+  <a class="btn" href="{% url urls.create %}">{{ new_label }}</a>
+</header>
+
+<div class="toolbar">
+  {% if searchable %}
+  <form method="get" role="search">
+    <input type="search" name="q" value="{{ q }}" placeholder="Rechercher" aria-label="Rechercher">
+    {% if chip_param and chip_current %}<input type="hidden" name="{{ chip_param }}" value="{{ chip_current }}">{% endif %}
+    <button class="btn btn-ghost" type="submit">Rechercher</button>
+  </form>
+  {% endif %}
+  {% if chips %}
+  <div class="chips">
+    {% for chip in chips %}<a class="chip{% if chip.active %} active{% endif %}" href="{{ chip.url }}">{{ chip.label }}</a>{% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        {% for col in columns %}<th{% if col.2 == "money" %} class="num"{% endif %}>{{ col.0 }}</th>{% endfor %}
+        <th><span class="sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in page_obj %}
+      <tr>
+        {% for col in columns %}
+          {% with value=row|attr:col.1 %}
+          <td{% if col.2 == "money" %} class="num"{% endif %}>
+            {% if col.2 == "money" %}{{ value|money }}
+            {% elif col.2 == "badge" %}<span class="badge badge-{{ value|slugify }}">{{ value }}</span>
+            {% elif forloop.first and urls.detail %}<a href="{% url urls.detail row.pk %}">{{ value }}</a>
+            {% else %}{{ value|default_if_none:"—" }}{% endif %}
+          </td>
+          {% endwith %}
+        {% endfor %}
+        <td class="row-actions">
+          <a class="btn btn-ghost btn-sm" href="{% url urls.update row.pk %}">Modifier</a>
+          <a class="btn btn-ghost btn-sm" href="{% url urls.delete row.pk %}">Supprimer</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td class="empty" colspan="{{ columns|length|add:1 }}">
+        Aucun enregistrement{% if q %} pour « {{ q }} »{% endif %}. Utilisez le bouton « {{ new_label }} » pour commencer.
+      </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="pager" aria-label="Pagination">
+  {% if page_obj.has_previous %}<a class="btn btn-ghost btn-sm" href="?{% if qs %}{{ qs }}&{% endif %}page={{ page_obj.previous_page_number }}">Précédent</a>{% endif %}
+  <span class="muted">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a class="btn btn-ghost btn-sm" href="?{% if qs %}{{ qs }}&{% endif %}page={{ page_obj.next_page_number }}">Suivant</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load core_extras %}
+{% block title %}{{ object }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>{{ object }}</h1>
+    <p class="muted">{{ object.espece }} · {{ object.ferme }}</p>
+  </div>
+  <div class="actions">
+    <a class="btn btn-ghost" href="{% url 'animal_list' %}">Retour à la liste</a>
+    <a class="btn" href="{% url 'animal_update' object.pk %}">Modifier</a>
+  </div>
+</header>
+
+<div class="stack">
+  <section class="card">
+    <dl class="facts">
+      <div><dt>Statut</dt><dd><span class="badge badge-{{ object.get_statut_display|slugify }}">{{ object.get_statut_display }}</span></dd></div>
+      <div><dt>Sexe</dt><dd>{{ object.get_sexe_display }}</dd></div>
+      <div><dt>Naissance</dt><dd>{{ object.date_naissance|default:"—" }}</dd></div>
+      <div><dt>Âge</dt><dd>{{ object.age|default:"—" }}</dd></div>
+      <div><dt>Mère</dt><dd>{% if object.mere %}<a href="{% url 'animal_detail' object.mere.pk %}">{{ object.mere }}</a>{% else %}—{% endif %}</dd></div>
+    </dl>
+  </section>
+
+  {% if descendants %}
+  <section>
+    <h2 class="section">Descendants</h2>
+    <div class="table-wrap"><table class="table"><tbody>
+      {% for d in descendants %}<tr><td><a href="{% url 'animal_detail' d.pk %}">{{ d }}</a></td><td>{{ d.get_sexe_display }}</td><td>{{ d.date_naissance|default:"—" }}</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+  {% endif %}
+
+  {% if naissances %}
+  <section>
+    <h2 class="section">Portées</h2>
+    <div class="table-wrap"><table class="table"><tbody>
+      {% for n in naissances %}<tr><td>{{ n.date }}</td><td>{{ n.nombre }} petit{{ n.nombre|pluralize }}</td><td>{{ n.observations }}</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+  {% endif %}
+
+  <section>
+    <h2 class="section">Mouvements</h2>
+    <div class="table-wrap"><table class="table"><tbody>
+      {% for m in mouvements %}<tr><td>{{ m.date }}</td><td>{{ m.get_type_display }}</td><td>{{ m.origine }}{% if m.origine and m.destination %} → {% endif %}{{ m.destination }}</td></tr>
+      {% empty %}<tr><td class="empty">Aucun mouvement enregistré.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+
+  <section>
+    <h2 class="section">Vaccinations</h2>
+    <div class="table-wrap"><table class="table"><tbody>
+      {% for v in vaccinations %}<tr><td>{{ v.date }}</td><td>{{ v.produit }}</td><td>{% if v.prochaine_date %}Rappel le {{ v.prochaine_date }}{% endif %}</td><td>{{ v.veterinaire }}</td></tr>
+      {% empty %}<tr><td class="empty">Aucune vaccination enregistrée.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+
+  <section>
+    <h2 class="section">Traitements</h2>
+    <div class="table-wrap"><table class="table"><tbody>
+      {% for t in traitements %}<tr><td>{{ t.date_debut }}{% if t.date_fin %} → {{ t.date_fin }}{% endif %}</td><td>{{ t.maladie }}</td><td>{{ t.produit }} {{ t.dosage }}</td><td>{{ t.veterinaire }}</td></tr>
+      {% empty %}<tr><td class="empty">Aucun traitement enregistré.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+
+  {% if achats or ventes or pertes %}
+  <section>
+    <h2 class="section">Achat, vente, perte</h2>
+    <div class="table-wrap"><table class="table"><tbody>
+      {% for a in achats %}<tr><td>{{ a.date }}</td><td>Achat</td><td>{{ a.vendeur }}</td><td class="num">{{ a.prix|money }}</td></tr>{% endfor %}
+      {% for v in ventes %}<tr><td>{{ v.date }}</td><td>Vente</td><td>{{ v.acheteur }}</td><td class="num">{{ v.prix|money }}</td></tr>{% endfor %}
+      {% for p in pertes %}<tr><td>{{ p.date }}</td><td>{{ p.get_type_display }}</td><td>{{ p.cause }}</td><td></td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}
