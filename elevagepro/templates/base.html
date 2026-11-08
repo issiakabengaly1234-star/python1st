@@ -10,7 +10,7 @@
 <div class="shell{% if not user.is_authenticated %} shell-auth{% endif %}">
   {% if user.is_authenticated %}
   <aside class="side">
-    <a class="brand" href="{% url 'dashboard' %}">ÉlevagePro</a>
+    <a class="brand" href="{% url 'dashboard' %}"><img src="{% static 'images/elevagepro_logo_rustique.png' %}" alt="ÉlevagePro"></a>
     <nav aria-label="Navigation principale">
       {% for group in nav_groups %}
         <h2>{{ group.label }}</h2>

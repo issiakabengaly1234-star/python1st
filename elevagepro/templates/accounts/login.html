@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Connexion{% endblock %}
 {% block content %}
-<h1>ÉlevagePro</h1>
+<img class="auth-brand" src="{% static 'images/elevagepro_logo_rustique.png' %}" alt="ÉlevagePro">
 <p class="muted">Connectez-vous pour suivre votre cheptel.</p>
 <form method="post" class="card" novalidate>
   {% csrf_token %}

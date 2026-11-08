@@ -27,7 +27,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .shell { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
 .shell-auth { grid-template-columns: 1fr; }
 .side { background: var(--ink); color: #dfe8e1; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-.brand { font-family: var(--serif); font-size: 1.5rem; color: #fff; text-decoration: none; padding: 0 .5rem; }
+.brand { display: block; padding: .5rem; background: #fff; border-radius: 6px; }
+.brand img { display: block; width: 100%; height: auto; }
+.auth-brand { display: block; width: 100%; height: auto; margin-bottom: 1.25rem; }
 .side h2 { font-size: .85rem; font-weight: 600; color: #93a89a; margin: 0 .5rem .35rem; }
 .side nav ul { list-style: none; margin: 0 0 1rem; padding: 0; }
 .side nav a { display: block; padding: .45rem .6rem; border-radius: 6px; color: #dfe8e1; text-decoration: none; }
